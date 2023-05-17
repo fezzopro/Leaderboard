@@ -5,7 +5,17 @@
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _css_style_css__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1);
+/* harmony import */ var _modules_game__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(11);
+/* harmony import */ var _modules_components__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(13);
 
+
+
+
+_modules_components__WEBPACK_IMPORTED_MODULE_2__["default"].submitScoreEvent();
+_modules_components__WEBPACK_IMPORTED_MODULE_2__["default"].refreshList();
+_modules_game__WEBPACK_IMPORTED_MODULE_1__["default"].getScores().then((scores) => {
+  _modules_components__WEBPACK_IMPORTED_MODULE_2__["default"].RenderScoreList(scores.result);
+});
 
 /***/ }),
 /* 1 */
@@ -317,7 +327,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_noSourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default()));
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "body {\n  display: flex;\n  flex-direction: column;\n  margin: 0;\n}\n\nsection {\n  padding-left: 2%;\n}\n\nform {\n  display: flex;\n  flex-direction: column;\n}\n\ninput {\n  padding: 0.2rem 0.5rem;\n  margin-top: 0.5rem;\n}\n\ninput:last-child {\n  width: 50%;\n  place-self: flex-end;\n}\n\nul {\n  list-style: none;\n  padding: 0;\n  border: 2px solid rgb(69, 68, 68);\n}\n\nli {\n  padding: 0.1rem 0.5rem;\n}\n\nli:nth-child(even) {\n  background-color: rgb(221 221 221);\n}\n\n.button {\n  background-color: aliceblue;\n  box-shadow: 5px 5px 4px 0 #8c8686;\n}\n\n.scores {\n  display: flex;\n  justify-content: space-around;\n}\n\n.left-side {\n  padding-left: 2%;\n  display: flex;\n  flex-direction: column;\n  min-width: 30rem;\n}\n\n.right-side {\n  display: flex;\n  flex-direction: column;\n  min-width: 15rem;\n}\n\n.refresh {\n  display: flex;\n  justify-content: space-between;\n  gap: 2rem;\n  align-items: flex-end;\n}\n\n.header > h1 {\n  padding-left: 10%;\n}\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "body {\n  display: flex;\n  flex-direction: column;\n  margin: 0;\n}\n\nsection {\n  padding-left: 2%;\n}\n\nform {\n  display: flex;\n  flex-direction: column;\n}\n\ninput {\n  padding: 0.2rem 0.5rem;\n  margin-top: 0.5rem;\n}\n\ninput:last-child {\n  width: 50%;\n  place-self: flex-end;\n}\n\nul {\n  list-style: none;\n  padding: 0;\n  border: 2px solid rgb(69, 68, 68);\n}\n\nli {\n  padding: 0.1rem 0.5rem;\n}\n\nli:nth-child(even) {\n  background-color: rgb(221 221 221);\n}\n\n.button {\n  background-color: aliceblue;\n  box-shadow: 5px 5px 4px 0 #8c8686;\n}\n\n.scores {\n  display: flex;\n  justify-content: space-around;\n}\n\n.left-side {\n  padding-left: 2%;\n  display: flex;\n  flex-direction: column;\n  min-width: 30rem;\n}\n\n.right-side {\n  display: flex;\n  flex-direction: column;\n  min-width: 15rem;\n}\n\n.refresh {\n  display: flex;\n  justify-content: space-between;\n  gap: 2rem;\n  align-items: flex-end;\n}\n\n.header > h1 {\n  padding-left: 10%;\n}\n\n.form-message {\n  color: green;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -421,6 +431,226 @@ module.exports = function (cssWithMappingToString) {
   };
   return list;
 };
+
+/***/ }),
+/* 11 */
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _storage__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(12);
+
+
+class GameAPI {
+  constructor() {
+    this.baseUrl = 'https://us-central1-js-capstone-backend.cloudfunctions.net/api/games/';
+    this.headers = {
+      'Content-Type': 'application/json',
+      'Access-Control-Allow-Origin': '*',
+    };
+
+    // Create and save the game if it's your first time playing
+    if (_storage__WEBPACK_IMPORTED_MODULE_0__["default"].readLocalStorage().length === 0) {
+      this.createGame()
+        .then(response => _storage__WEBPACK_IMPORTED_MODULE_0__["default"].saveToLocalStorage({ gameId: this.splitForGameId(response.result), }));
+    }
+  }
+
+  createGame = async () => {
+    try {
+      const response = await fetch(this.baseUrl, {
+        method: 'POST',
+        body: JSON.stringify({ name: _storage__WEBPACK_IMPORTED_MODULE_0__["default"].GAMENAME, }),
+        headers: this.headers,
+      });
+
+      return response.json();
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  splitForGameId = (string) => {
+    return string.split(' ')[3];
+  };
+
+  getGameId = () => {
+    return _storage__WEBPACK_IMPORTED_MODULE_0__["default"].readLocalStorage()[0].gameId;
+  };
+
+  saveScore = async (score) => {
+    try {
+      const response = await fetch(`${this.baseUrl}${this.getGameId()}/scores/`,
+        {
+          method: 'POST',
+          body: JSON.stringify(score),
+          headers: this.headers,
+        },
+      );
+
+      return response.json();
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  getScores = async () => {
+    try {
+      const response = await fetch(`${this.baseUrl}${this.getGameId()}/scores/`,
+        {
+          method: 'GET',
+        },
+      );
+
+      return response.json();
+    } catch (error) {
+      throw error;
+    }
+  };
+}
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (new GameAPI());
+
+/***/ }),
+/* 12 */
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+class Storage {
+  constructor() {
+    this.localStorage = localStorage;
+    this.GAMENAME = 'Monopoly';
+    if (!this.isLocalStorage()) {
+      this.createLocalStorage();
+    }
+  }
+
+  isLocalStorage = () => {
+    const storage = this.localStorage.getItem(this.GAMENAME);
+    return storage;
+  }
+
+  createLocalStorage = () => {
+    this.localStorage.setItem(this.GAMENAME, JSON.stringify([]));
+  }
+
+  readLocalStorage = () => {
+    const storage = JSON.parse(this.localStorage.getItem(this.GAMENAME));
+    return storage;
+  }
+
+  saveToLocalStorage = (gameInfo) => {
+    this.localStorage.setItem(this.GAMENAME,
+      JSON.stringify([...this.readLocalStorage(), gameInfo]));
+  }
+}
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (new Storage());
+
+/***/ }),
+/* 13 */
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _eventHandlers__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(14);
+
+
+class Components {
+
+  RenderScoreList = (scores) => {
+    const ul = document.querySelector('.score-boad > ul');
+    ul.textContent = '';
+
+    if (scores.length > 0) {
+      scores.forEach(score => {
+        const li = document.createElement('li');
+        li.className = 'score-item';
+
+        const nameSpan = document.createElement('span');
+        nameSpan.className = 'nameSpan';
+        nameSpan.textContent = `${score.user}: `;
+
+        const scoreSpan = document.createElement('span');
+        scoreSpan.className = 'scoreSpan';
+        scoreSpan.textContent = score.score;
+
+        li.appendChild(nameSpan);
+        li.appendChild(scoreSpan);
+
+        ul.appendChild(li);
+      });
+    }
+  };
+
+  displayFormMessage = async (message) => {
+    const form = document.querySelector('.submit-bnt');
+    const messageSpan = document.createElement('span');
+    messageSpan.className = 'form-message';
+    messageSpan.textContent = message;
+    form.insertAdjacentElement('beforebegin', messageSpan);
+  };
+
+  clearInputs = () => {
+    setTimeout(() => {
+      document.querySelector('form').reset();
+    }, 500);
+  };
+
+  submitScoreEvent = () => {
+    document.querySelector('.submit-bnt').addEventListener('click', (event) => {
+      event.preventDefault();
+      const message = _eventHandlers__WEBPACK_IMPORTED_MODULE_0__["default"].submitScoreHandler();
+      message.then(async (msg) => {
+        this.displayFormMessage(msg.result);
+        this.clearInputs();
+      });
+    });
+  };
+
+  refreshList = async () => {
+    document.querySelector('.refresh-btn').addEventListener('click', (event) => {
+      event.preventDefault();
+      _eventHandlers__WEBPACK_IMPORTED_MODULE_0__["default"].refreshHandler().then((response) => {
+        this.RenderScoreList(response.result);
+      });
+    });
+  };
+}
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (new Components());
+
+/***/ }),
+/* 14 */
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _game__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(11);
+
+
+class EventHandler{
+  refreshHandler = async () => {
+    return await _game__WEBPACK_IMPORTED_MODULE_0__["default"].getScores();
+  };
+
+  submitScoreHandler = () => {
+    const name = document.querySelector('.names').value;
+    const score = document.querySelector('.score').value;
+    return _game__WEBPACK_IMPORTED_MODULE_0__["default"].saveScore({user: name, score: score});
+  };
+}
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (new EventHandler());
 
 /***/ })
 ],
