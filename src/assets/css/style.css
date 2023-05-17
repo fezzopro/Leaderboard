@@ -70,3 +70,7 @@ li:nth-child(even) {
 .header > h1 {
   padding-left: 10%;
 }
+
+.form-message {
+  color: green;
+}
