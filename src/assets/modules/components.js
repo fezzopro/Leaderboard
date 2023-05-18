@@ -38,6 +38,9 @@ class Components {
     setTimeout(() => {
       document.querySelector('form').reset();
     }, 500);
+    setTimeout(() => {
+      document.querySelector('form').removeChild(document.querySelector('.form-message'));
+    }, 1000);
   };
 
   submitScoreEvent = () => {
