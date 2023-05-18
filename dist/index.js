@@ -483,7 +483,7 @@ class GameAPI {
           method: 'POST',
           body: JSON.stringify(score),
           headers: this.headers,
-        },);
+        });
 
       return response.json();
     } catch (error) {
@@ -496,7 +496,7 @@ class GameAPI {
       const response = await fetch(`${this.baseUrl}${this.getGameId()}/scores/`,
         {
           method: 'GET',
-        },);
+        });
 
       return response.json();
     } catch (error) {
@@ -595,6 +595,9 @@ class Components {
     setTimeout(() => {
       document.querySelector('form').reset();
     }, 500);
+    setTimeout(() => {
+      document.querySelector('form').removeChild(document.querySelector('.form-message'));
+    }, 1000);
   };
 
   submitScoreEvent = () => {
