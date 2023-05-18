@@ -1,13 +1,12 @@
-import eventHandlers from "./eventHandlers";
+import eventHandlers from './eventHandlers';
 
 class Components {
-
   RenderScoreList = (scores) => {
     const ul = document.querySelector('.score-boad > ul');
     ul.textContent = '';
 
     if (scores.length > 0) {
-      scores.forEach(score => {
+      scores.forEach((score) => {
         const li = document.createElement('li');
         li.className = 'score-item';
 

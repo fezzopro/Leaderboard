@@ -1,4 +1,4 @@
-import storage from "./storage";
+import storage from './storage';
 
 class GameAPI {
   constructor() {
@@ -11,7 +11,8 @@ class GameAPI {
     // Create and save the game if it's your first time playing
     if (storage.readLocalStorage().length === 0) {
       this.createGame()
-        .then(response => storage.saveToLocalStorage({ gameId: this.splitForGameId(response.result), }));
+        .then((response) => storage
+          .saveToLocalStorage({ gameId: this.splitForGameId(response.result) }));
     }
   }
 
@@ -19,7 +20,7 @@ class GameAPI {
     try {
       const response = await fetch(this.baseUrl, {
         method: 'POST',
-        body: JSON.stringify({ name: storage.GAMENAME, }),
+        body: JSON.stringify({ name: storage.GAMENAME }),
         headers: this.headers,
       });
 
@@ -29,13 +30,9 @@ class GameAPI {
     }
   };
 
-  splitForGameId = (string) => {
-    return string.split(' ')[3];
-  };
+  splitForGameId = (string) => string.split(' ')[3];
 
-  getGameId = () => {
-    return storage.readLocalStorage()[0].gameId;
-  };
+  getGameId = () => storage.readLocalStorage()[0].gameId;
 
   saveScore = async (score) => {
     try {
