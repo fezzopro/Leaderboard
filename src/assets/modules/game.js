@@ -17,7 +17,7 @@ class GameAPI {
   }
 
   createGame = async () => {
-    try {
+    try { // eslint-disable-line no-useless-catch
       const response = await fetch(this.baseUrl, {
         method: 'POST',
         body: JSON.stringify({ name: storage.GAMENAME }),
@@ -35,14 +35,13 @@ class GameAPI {
   getGameId = () => storage.readLocalStorage()[0].gameId;
 
   saveScore = async (score) => {
-    try {
+    try { // eslint-disable-line no-useless-catch
       const response = await fetch(`${this.baseUrl}${this.getGameId()}/scores/`,
         {
           method: 'POST',
           body: JSON.stringify(score),
           headers: this.headers,
-        },
-      );
+        },);
 
       return response.json();
     } catch (error) {
@@ -51,12 +50,11 @@ class GameAPI {
   };
 
   getScores = async () => {
-    try {
+    try { // eslint-disable-line no-useless-catch
       const response = await fetch(`${this.baseUrl}${this.getGameId()}/scores/`,
         {
           method: 'GET',
-        },
-      );
+        },);
 
       return response.json();
     } catch (error) {
