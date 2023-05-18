@@ -1,7 +1,10 @@
+@import url('https://fonts.googleapis.com/css2?family=Bruno+Ace&display=swap');
+
 body {
   display: flex;
   flex-direction: column;
   margin: 0;
+  font-family: 'Bruno Ace', cursive;
 }
 
 section {
@@ -18,6 +21,11 @@ input {
   margin-top: 0.5rem;
 }
 
+input::placeholder,
+.button {
+  font-family: 'Bruno Ace', cursive;
+}
+
 input:last-child {
   width: 50%;
   place-self: flex-end;
@@ -27,10 +35,13 @@ ul {
   list-style: none;
   padding: 0;
   border: 2px solid rgb(69, 68, 68);
+  box-shadow: 7px 9px 11px 0 #a7a3a3;
 }
 
 li {
   padding: 0.1rem 0.5rem;
+  display: flex;
+  gap: 1rem;
 }
 
 li:nth-child(even) {
