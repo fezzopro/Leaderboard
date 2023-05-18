@@ -454,15 +454,15 @@ class GameAPI {
     // Create and save the game if it's your first time playing
     if (_storage__WEBPACK_IMPORTED_MODULE_0__["default"].readLocalStorage().length === 0) {
       this.createGame()
-        .then(response => _storage__WEBPACK_IMPORTED_MODULE_0__["default"].saveToLocalStorage({ gameId: this.splitForGameId(response.result), }));
+        .then((response) => _storage__WEBPACK_IMPORTED_MODULE_0__["default"].saveToLocalStorage({ gameId: this.splitForGameId(response.result) }));
     }
   }
 
   createGame = async () => {
-    try {
+    try { // eslint-disable-line no-useless-catch
       const response = await fetch(this.baseUrl, {
         method: 'POST',
-        body: JSON.stringify({ name: _storage__WEBPACK_IMPORTED_MODULE_0__["default"].GAMENAME, }),
+        body: JSON.stringify({ name: _storage__WEBPACK_IMPORTED_MODULE_0__["default"].GAMENAME }),
         headers: this.headers,
       });
 
@@ -472,23 +472,18 @@ class GameAPI {
     }
   };
 
-  splitForGameId = (string) => {
-    return string.split(' ')[3];
-  };
+  splitForGameId = (string) => string.split(' ')[3];
 
-  getGameId = () => {
-    return _storage__WEBPACK_IMPORTED_MODULE_0__["default"].readLocalStorage()[0].gameId;
-  };
+  getGameId = () => _storage__WEBPACK_IMPORTED_MODULE_0__["default"].readLocalStorage()[0].gameId;
 
   saveScore = async (score) => {
-    try {
+    try { // eslint-disable-line no-useless-catch
       const response = await fetch(`${this.baseUrl}${this.getGameId()}/scores/`,
         {
           method: 'POST',
           body: JSON.stringify(score),
           headers: this.headers,
-        },
-      );
+        },);
 
       return response.json();
     } catch (error) {
@@ -497,12 +492,11 @@ class GameAPI {
   };
 
   getScores = async () => {
-    try {
+    try { // eslint-disable-line no-useless-catch
       const response = await fetch(`${this.baseUrl}${this.getGameId()}/scores/`,
         {
           method: 'GET',
-        },
-      );
+        },);
 
       return response.json();
     } catch (error) {
@@ -564,13 +558,12 @@ __webpack_require__.r(__webpack_exports__);
 
 
 class Components {
-
   RenderScoreList = (scores) => {
     const ul = document.querySelector('.score-boad > ul');
     ul.textContent = '';
 
     if (scores.length > 0) {
-      scores.forEach(score => {
+      scores.forEach((score) => {
         const li = document.createElement('li');
         li.className = 'score-item';
 
@@ -638,15 +631,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _game__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(11);
 
 
-class EventHandler{
-  refreshHandler = async () => {
-    return await _game__WEBPACK_IMPORTED_MODULE_0__["default"].getScores();
-  };
+class EventHandler {
+  refreshHandler = () => _game__WEBPACK_IMPORTED_MODULE_0__["default"].getScores();
 
   submitScoreHandler = () => {
     const name = document.querySelector('.names').value;
     const score = document.querySelector('.score').value;
-    return _game__WEBPACK_IMPORTED_MODULE_0__["default"].saveScore({user: name, score: score});
+    return _game__WEBPACK_IMPORTED_MODULE_0__["default"].saveScore({ user: name, score });
   };
 }
 
